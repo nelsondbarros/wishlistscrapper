@@ -1,1 +1,1 @@
-### Amazon Wishlist Web Scrapper
+### Simple script to scrape amazon wishlist items with a built-in json exporter
