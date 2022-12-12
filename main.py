@@ -1,6 +1,7 @@
-from bs4 import BeautifulSoup
-import requests as r
 import json
+
+import requests as r
+from bs4 import BeautifulSoup
 
 
 def parse():
