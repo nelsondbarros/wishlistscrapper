@@ -4,8 +4,15 @@ import requests as r
 from bs4 import BeautifulSoup
 
 
-def parse():
-    url = input("url: ")
+def parse(url):
+    """
+    Find all items in the wishlist page and return its names and prices.
+    :param url:
+    The url of the page
+    :return tuple:
+    Name and price as a tuple
+    """
+
     url_text = r.get(url).text
 
     soup = BeautifulSoup(url_text, "lxml")
@@ -15,10 +22,16 @@ def parse():
 
     for item in items:
         name_list.append(item.find("h2", class_="a-size-base").text.lstrip())
-        price_list.append(item.find("span", class_="a-offscreen").text.lstrip())
+        if item.find("span", class_="a-offscreen").text is None:
+            pass
+        else:
+            price_list.append(item.find("span", class_="a-offscreen").text.lstrip())
 
     for n, p in zip(name_list, price_list):
         print(n, p)
+
+    if len(name_list) == 0 or len(price_list) == 0:
+        raise Exception("Could not retrieve items, please try again!")
     return name_list, price_list
 
 
@@ -33,7 +46,8 @@ def convert_to_json(*args):
 
 
 def main():
-    data = parse()
+    url = input("url: ")
+    data = parse(url)
     print("Export data to JSON? y/n")
     answer = input("")
 
