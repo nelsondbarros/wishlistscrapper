@@ -23,7 +23,7 @@ def parse(url):
     for item in items:
         name_list.append(item.find("h2", class_="a-size-base").text.lstrip())
         if item.find("span", class_="a-offscreen").text is None:
-            pass
+            price_list.append("N/A")
         else:
             price_list.append(item.find("span", class_="a-offscreen").text.lstrip())
 
@@ -37,8 +37,8 @@ def parse(url):
 
 def convert_to_json(*args):
     list_object = []
-    for i in range(0, len(args)):
-        list_object.append({"item": args[0][i], "price": args[1][i]})
+    for i in range(0, len(args[0][0])):
+        list_object.append({"item": args[0][0][i], "price": args[0][1][i]})
 
     with open("wishlist.json", "w") as file:
         file.write(json.dumps(list_object, indent=1))
@@ -56,7 +56,7 @@ def main():
             return 0
 
         case "y":
-            convert_to_json(data[0], data[1])
+            convert_to_json(data)
             return 0
 
 
