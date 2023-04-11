@@ -4,13 +4,11 @@ import requests as r
 from bs4 import BeautifulSoup
 
 
-def parse(url):
+def parse(url: str) -> tuple:
     """
     Find all items in the wishlist page and return its names and prices.
-    :param url:
-    The url of the page
-    :return tuple:
-    Name and price as a tuple
+    :param url: The url of the page
+    :return: tuple (Name and price)
     """
 
     url_text = r.get(url).text
@@ -35,14 +33,18 @@ def parse(url):
     return name_list, price_list
 
 
-def convert_to_json(*args):
+def convert_to_json(*args: tuple) -> None:
+    """
+    Append dict items to a list and return json file
+    :param args: Tuple returned by parse function
+    :return: None
+    """
     list_object = []
     for i in range(0, len(args[0][0])):
         list_object.append({"item": args[0][0][i], "price": args[0][1][i]})
 
     with open("wishlist.json", "w") as file:
         file.write(json.dumps(list_object, indent=1))
-        return 0
 
 
 def main():
