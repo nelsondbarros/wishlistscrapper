@@ -1,10 +1,12 @@
 import json
+import sys
 
+import pandas as pd
 import requests as r
 from bs4 import BeautifulSoup
 
 
-def parse(url: str) -> tuple:
+def scrape_site(url: str) -> tuple:
     """
     Find all items in the wishlist page and return its names and prices.
     :param url: The url of the page
@@ -33,32 +35,63 @@ def parse(url: str) -> tuple:
     return name_list, price_list
 
 
+def scrape_to_list(data):
+    """
+    Return a list of dictionaries from given data
+    :param data:
+    :return: list
+    """
+
+    list_object = []
+    for i in range(0, len(data[0][0])):
+        list_object.append({"item": data[0][0][i], "price": data[0][1][i]})
+    return list_object
+
+
 def convert_to_json(*args: tuple) -> None:
     """
-    Append dict items to a list and return json file
-    :param args: Tuple returned by parse function
+    Creates a JSON file from given data
+    :param args: Tuple returned by scrape function
     :return: None
     """
-    list_object = []
-    for i in range(0, len(args[0][0])):
-        list_object.append({"item": args[0][0][i], "price": args[0][1][i]})
+
+    list_items = scrape_to_list(args)
 
     with open("wishlist.json", "w") as file:
-        file.write(json.dumps(list_object, indent=1))
+        file.write(json.dumps(list_items, indent=1))
+
+
+def convert_to_csv(*args: tuple) -> None:
+    """
+    Creates CSV file from given data
+    :param args:
+    :return: None
+    """
+
+    list_items = scrape_to_list(args)
+
+    data_frame = pd.DataFrame(list_items)
+    data_frame.to_csv("wishlist.csv")
 
 
 def main():
-    url = input("url: ")
-    data = parse(url)
-    print("Export data to JSON? y/n")
+    """
+    Takes URL as CLI
+    :return: int
+    """
+    url = sys.argv[1]
+    data = scrape_site(url)
+    print("Export data? 1-JSON, 2-CSV, type e to exit")
     answer = input("")
 
     match answer:
-        case "n":
-            return 0
-
-        case "y":
+        case "1":
             convert_to_json(data)
+
+        case "2":
+            convert_to_csv(data)
+
+        case "e":
             return 0
 
 
